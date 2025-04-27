@@ -1,6 +1,7 @@
 package com.example.asterixapispringdata.Service;
 
 import com.example.asterixapispringdata.Model.Character;
+import com.example.asterixapispringdata.Model.CharacterDto;
 import com.example.asterixapispringdata.Repository.CharacterRepository;
 import lombok.With;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,11 @@ import java.util.List;
 @Service
 public class CharacterService {
     private final CharacterRepository characterRepository;
+    private final IdService idService;
 
-    public CharacterService(CharacterRepository characterRepository) {
+    public CharacterService(CharacterRepository characterRepository, IdService idService) {
         this.characterRepository = characterRepository;
+        this.idService = idService;
     }
 
     //get all
@@ -21,21 +24,27 @@ public class CharacterService {
         return characterRepository.findAll();
     }
 
-    //post
-    public Character addCharacter(@RequestBody Character newCharacter) {
+    //post - With Random ID
+    //from: @RequestBody Character newCharacter
+    public Character addCharacter(@RequestBody CharacterDto newCharacterDto) {
+        //adding step for using random generated id
+       String generatedId = idService.generateRandomId();
+        // Create the new character with the generated ID
+        Character newCharacter = new Character(generatedId, newCharacterDto.name(), newCharacterDto.age(), newCharacterDto.profession());
         return characterRepository.save(newCharacter);
     }
 
-    //update - put
-    public Character updateCharacter(@PathVariable String id, @RequestBody Character updatedCharacter) {
+    //update - put - use generated id, so user cant chnage it
+    //from:     public Character updateCharacter(@PathVariable String id, @RequestBody Character updatedCharacter) {
+    public Character updateCharacter(@PathVariable String id, @RequestBody CharacterDto updatedCharacter) {
         Character oldCharacter = characterRepository.findById(id).orElse(null);
         if (oldCharacter != null) {
-            characterRepository.save(oldCharacter
+            oldCharacter = characterRepository.save(oldCharacter //saved here in oldCharacter
                     .withName(updatedCharacter.name())
                     .withAge(updatedCharacter.age())
                     .withProfession(updatedCharacter.profession()));
         }
-        return updatedCharacter;
+        return oldCharacter; //Returns the updated character
     }
     //Delete
     public void deleteCharacter(@PathVariable String id) {

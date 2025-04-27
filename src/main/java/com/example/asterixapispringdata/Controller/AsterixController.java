@@ -1,5 +1,6 @@
 package com.example.asterixapispringdata.Controller;
 
+import com.example.asterixapispringdata.Model.CharacterDto;
 import com.example.asterixapispringdata.Repository.CharacterRepository;
 import com.example.asterixapispringdata.Service.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,14 @@ public class AsterixController {
         // Declare the repository as an instance variable
         return characterService.getAllCharacters();
     }
-    //Create, Post
+    //Create, Post //Take random generated Id. //from: @RequestBody Character newCharacter
     @PostMapping("/asterix/characters")
-    public Character addCharcter(@RequestBody Character newCharacter) {
-        return characterService.addCharacter(newCharacter);
+    public Character addCharcter(@RequestBody CharacterDto newCharacterDtp) {
+        return characterService.addCharacter(newCharacterDtp);
     }
     //Update - Put
     @PutMapping("asterix/characters/{id}")
-    public Character updatedChacrter(@PathVariable String id, @RequestBody Character updateCharacter) {
+    public Character updatedChacrter(@PathVariable String id, @RequestBody CharacterDto updateCharacter) {
         return characterService.updateCharacter(id, updateCharacter);
     }
     //Delete
