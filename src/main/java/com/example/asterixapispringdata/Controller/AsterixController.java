@@ -35,9 +35,7 @@ public class AsterixController {
     public List<Character> getAllCharactersWithAgeFilter(@RequestParam(required = false) Integer age) {
         List<Character> allCharacters = characterService.getAllCharacters();
         if(age != null) {
-            return allCharacters.stream() //using stream
-                    .filter(character -> character.age() <= age) //Filter based on age, keep characters whose age is <= the provided age
-                    .collect(Collectors.toList());
+            return characterRepository.findByAgeLessThanEqual(age); // Direct database filtering, using query filter
         }
         else {
             return characterService.getAllCharacters(); //return all character
